@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.whp.usdtfb.user.Dao.LFbAssetOrderDetailDao">
+
+    <select id="LFbAssetOrderDetailSelect" resultType="map">
+        SELECT
+        a.createtime,
+        DATE_FORMAT(a.createtime, "%Y/%m/%d") AS 'date',
+        DATE_FORMAT(a.createtime, "%H:%i:%S") AS 'time',
+        a.type,
+        a.number,
+        a.money,
+        a.id,
+        c.name
+        FROM
+        fb_order AS a
+        INNER JOIN fb_sell b
+        ON a.sellid = b.pid
+        <if test="map.currencyid!=null and map.currencyid!=''">
+            and b.fb_currency_id = #{map.currencyid}
+        </if>
+
+        and b.isdel = '0'
+        INNER JOIN fb_currency as c on c.pid=b.fb_currency_id
+        <where>
+            <if test="type == 0">
+                and a.userid = #{userid}
+            </if>
+
+            <if test="type == 1">
+                and a.fuserid = #{userid}
+            </if>
+            and a.type = #{type}
+            and a.isdel = '0'
+        </where>
+        order by a.createtime desc
+    </select>
+
+    <select id="LFbTransferDetailSelect" resultType="map">
+        SELECT
+        createtime,
+        DATE_FORMAT(createtime, "%Y/%m/%d") AS 'date',
+        DATE_FORMAT(createtime, "%H:%i:%S") AS 'time',
+        type,
+        from_money,
+        if(a.from_currency = #{map.currencyid},0,1) as state
+        FROM
+        fb_transfer AS a
+        WHERE
+        a.userid = #{userid}
+        <if test="map.currencyid!=null and map.currencyid!=''">
+            and ( a.from_currency = #{map.currencyid} or a.to_currency=#{map.currencyid})
+        </if>
+        order by a.createtime desc
+    </select>
+
+</mapper>

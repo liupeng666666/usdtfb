@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.whp.usdtfb.user.Dao.LFbSysWalletDao">
+    <select id="FbSysWalletSelect" resultType="map">
+        select * from fb_sys_wallet where codeid=#{codeid} limit 1
+    </select>
+</mapper>

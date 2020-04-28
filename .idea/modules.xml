@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/CNY/CNY.iml" filepath="$PROJECT_DIR$/CNY/CNY.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Util/Util.iml" filepath="$PROJECT_DIR$/Util/Util.iml" />
+      <module fileurl="file://$PROJECT_DIR$/block/block.iml" filepath="$PROJECT_DIR$/block/block.iml" />
+      <module fileurl="file://$PROJECT_DIR$/launcher/launcher.iml" filepath="$PROJECT_DIR$/launcher/launcher.iml" />
+      <module fileurl="file://$PROJECT_DIR$/socket/socket.iml" filepath="$PROJECT_DIR$/socket/socket.iml" />
+      <module fileurl="file://$PROJECT_DIR$/usdtfb.iml" filepath="$PROJECT_DIR$/usdtfb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/user/user.iml" filepath="$PROJECT_DIR$/user/user.iml" />
+    </modules>
+  </component>
+</project>

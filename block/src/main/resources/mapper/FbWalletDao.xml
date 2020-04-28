@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.whp.usdtfb.block.Dao.FbWalletDao">
+    <select id="FbWalletSelect" resultType="map">
+        select * from fb_wallet where userid=#{userid} and codeid=#{codeid} limit 1
+    </select>
+
+    <insert id="FbWalletInsert">
+        INSERT INTO `fb_wallet` (
+        `pid`,
+        `address`,
+        `private`,
+        `public`,
+        `path`,
+        `createtime`,
+        `codeid`,
+        `state`,
+        `isdel`,
+        `userid`
+        )
+        VALUES
+        (
+        uuid(),
+        #{address},
+        #{private},
+        #{public},
+        #{path},
+        now(),
+        #{codeid},
+        0,
+        0,
+        #{userid}
+        );
+    </insert>
+    <select id="FbWalletList" resultType="map">
+        select * from fb_wallet where codeid=#{codeid}
+    </select>
+</mapper>

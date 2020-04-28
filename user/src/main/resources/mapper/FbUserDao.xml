@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.whp.usdtfb.user.Dao.FbUserDao">
+    <select id="FbUserSelect" resultType="map">
+        SELECT
+        a.pid,
+        a.img,
+        a.nickname,
+        a.phone,
+        a.email,
+        a.realname,
+        a.isgoogle,
+        a.google_secret,
+        b.*, c.`name`,a.real_name
+        FROM
+        usdt.sub_user AS a
+        LEFT JOIN usdtfb.fb_user AS b ON a.pid = b.pid
+        INNER JOIN usdt.sys_grade AS c ON c.pid = a.sys_grade_id
+        WHERE
+        a.pid = #{pid}
+    </select>
+
+    <update id="FbUserUpdate">
+        UPDATE fb_user
+        <set>
+            <if test="wx!=null and wx!=''">
+                `wx` = #{wx},
+            </if>
+            <if test="alpay!=null and alpay!=''">
+                `alpay` = #{alpay},
+            </if>
+            <if test="qq!=null and qq!=''">
+                `qq` = #{qq},
+            </if>
+            <if test="trad_volume!=null and trad_volume!=''">
+                `trad_volume` = #{trad_volume},
+            </if>
+            <if test="reputation!=null and reputation!=''">
+                `reputation` = #{reputation},
+            </if>
+            <if test="pay!=null and pay!=''">
+                `pay` = #{pay},
+            </if>
+            <if test="webo!=null and webo!=''">
+                `webo` = #{webo},
+            </if>
+            <if test="contract!=null and contract!=''">
+                `contract` = #{contract}
+            </if>
+        </set>
+        WHERE pid=#{pid}
+    </update>
+    <update id="FbUserUpdateQ">
+        update fb_user
+        <set>
+            <if test="reputation!=null and reputation!=''">
+                reputation=#{reputation},
+            </if>
+
+            <if test="trad_volume!=null and trad_volume!=''">
+                trad_volume=trad_volume+1,
+            </if>
+        </set>
+        <where>
+            pid=#{userid}
+        </where>
+    </update>
+    <select id="FbUserReputation" resultType="int">
+        select reputation from fb_user where pid=#{userid}
+    </select>
+</mapper>

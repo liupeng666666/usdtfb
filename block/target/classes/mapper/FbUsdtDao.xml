@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.whp.usdtfb.block.Dao.FbUsdtDao">
+    <insert id="FbUsdtInsert">
+        INSERT INTO fb_usdt` (
+        `pid`,
+        `style`,
+        `isdel`,
+        `createtime`,
+        `to_address`,
+        `examine`,
+        `money`,
+        `userid`,
+        `trade`,
+        `from_wallet`,
+        `txid`,
+        `height`,
+        `codeid`
+        )
+        VALUES
+        (
+        uuid(),
+        1,
+        0,
+        now(),
+        #{to_address},
+        0,
+        #{money},
+        #{userid},
+        0,
+        #{from_address},
+        #{txid},
+        #{height},
+        #{codeid}
+        );
+    </insert>
+
+    <select id="FbUsdtDan" resultType="map">
+        select * from fb_usdt where to_address=#{address} ORDER BY height desc limit 1;
+    </select>
+</mapper>

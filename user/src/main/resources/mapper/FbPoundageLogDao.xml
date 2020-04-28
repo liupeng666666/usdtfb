@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.whp.usdtfb.user.Dao.FbPoundageLogDao">
+    <insert id="FbPoundageLogInsert">
+        INSERT INTO `fb_poundage_log` (
+        `pid`,
+        `sellid`,
+        `poundage`,
+        `createtime`,
+        `isdel`,
+        `userid`,
+        `currencyid`
+        )
+        VALUES
+        (
+        uuid(),
+        #{sellid},
+        #{poundage},
+        now(),
+        0,
+        #{userid},
+        #{currencyid}
+        );
+    </insert>
+
+    <select id="FbPoundageSelect" resultType="map">
+        SELECT
+        a.pid,a.poundage,a.createtime,b.number,b.type,b.money,c.name,b.userid,
+        DATE_FORMAT(a.createtime, "%Y/%m/%d") AS 'date',
+        DATE_FORMAT(a.createtime, "%H:%i:%S") AS 'time'
+        FROM
+        fb_poundage_log AS a
+        INNER JOIN fb_order AS b ON a.sellid = b.pid
+        INNER JOIN fb_currency as c on c.pid=a.currencyid
+        <where>
+            a.userid=#{userid}
+            <if test="currencyid!=null and currencyid!=''">
+                and a.currencyid = #{currencyid}
+            </if>
+        </where>
+        order by a.createtime desc
+    </select>
+
+</mapper>

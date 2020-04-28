@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.whp.usdtfb.user.Dao.FbMoneyDao">
+    <select id="FbMoneySelect" resultType="map">
+        select * from fb_money where isdel=0 and state=0 and currencyid=#{currencyid} and userid=#{userid}
+        <if test="lock!=null and lock!=''">
+            for update;
+        </if>
+    </select>
+    <update id="FbMoneyUpdate">
+        update fb_money
+        <set>
+            <if test="state==null or state== ''">
+                surplus=surplus-#{surplus},
+            </if>
+            <if test="type==null or type==''">
+                frozen=frozen+#{surplus}
+            </if>
+
+        </set>
+        where currencyid=#{currencyid} and userid=#{userid}
+    </update>
+    <insert id="FbMoneyInsert">
+        INSERT INTO `fb_money` (
+        `pid`,
+        `name`,
+        `surplus`,
+        `frozen`,
+        `createtime`,
+        `updatetime`,
+        `isdel`,
+        `state`,
+        `currencyid`,
+        `userid`
+        )
+        VALUES
+        (
+        uuid(),
+        (select name from fb_currency where pid=#{currencyid}),
+        0,
+        0,
+        now(),
+        now(),
+        '0',
+        '0',
+        #{currencyid},
+        #{userid}
+        );
+
+
+    </insert>
+
+</mapper>

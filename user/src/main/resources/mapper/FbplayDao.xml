@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.whp.usdtfb.user.Dao.FbPlayDao">
+    <select id="FbPlaySelect" resultType="map">
+        select a.pid,
+        a.`name`,
+        a.bankid,
+        a.khao,
+        a.memo,
+        a.state,
+        a.`type`,
+        a.isdel,
+        a.img,
+        a.userid,
+        a.openbank,
+        b.name as 'bank_name' from fb_play as a LEFT JOIN fb_bank as b on a.bankid=b.pid where a.isdel=0 and a.state=0
+        and a.userid=#{pid}
+        <if test="type!=null and type!=''">
+            and a.`type`=#{type}
+        </if>
+    </select>
+    <insert id="FbPlayInsert">
+        INSERT INTO `fb_play` (
+        `pid`,
+        <if test="name!=null and name!=''">
+            `name`,
+        </if>
+        <if test="bankid!=null and bankid!=''">
+            `bankid`,
+        </if>
+        <if test="open_bank!=null and open_bank!=''">
+            openbank,
+        </if>
+        <if test="khao!=null and khao!=''">
+            `khao`,
+        </if>
+        <if test="memo!=null and memo!=''">
+            `memo`,
+        </if>
+        <if test="password!=null and password!=''">
+            `password`,
+        </if>
+
+        `type`,
+        <if test="img!=null and img!=''">
+            `img`,
+        </if>
+        `userid`
+        )
+        VALUES
+        (
+        uuid(),
+        <if test="name!=null and name!=''">
+            #{name},
+        </if>
+        <if test="bankid!=null and bankid!=''">
+            #{bankid},
+        </if>
+        <if test="open_bank!=null and open_bank!=''">
+            #{open_bank},
+        </if>
+        <if test="khao!=null and khao!=''">
+            #{khao},
+        </if>
+        <if test="memo!=null and memo!=''">
+            #{memo},
+        </if>
+        <if test="password!=null and password!=''">
+            #{password},
+        </if>
+        #{type},
+        <if test="img!=null and img!=''">
+            #{img},
+        </if>
+        #{userid}
+        );
+    </insert>
+
+    <update id="FbPlayUpdate">
+        UPDATE `fb_play`
+        <set>
+            <if test="name!=null and name!=''">
+                `name` = #{name},
+            </if>
+            <if test="bankid!=null and bankid!=''">
+                `bankid` = #{bankid},
+            </if>
+            <if test="open_bank!=null and open_bank!=''">
+                `openbank` = #{open_bank},
+            </if>
+            <if test="khao!=null and khao!=''">
+                `khao` = #{khao},
+            </if>
+            <if test="memo!=null and memo!=''">
+                `memo` = #{memo},
+            </if>
+            <if test="password!=null and password!=''">
+                `password` = #{password},
+            </if>
+            <if test="state!=null and state!=''">
+                `state` = #{state},
+            </if>
+            <if test="type!=null and type!=''">
+                `type` = #{type},
+            </if>
+            <if test="isdel!=null and isdel!=''">
+                `isdel` = #{isdel},
+            </if>
+            <if test="img!=null and img!=''">
+                `img` = #{img},
+            </if>
+            <if test="userid!=null and userid!=''">
+                `userid` = #{userid},
+            </if>
+        </set>
+        WHERE
+        pid=#{pid}
+    </update>
+
+    <select id="FbBankSelect" resultType="map">
+        select * from fb_bank where state=0 and isdel=0
+    </select>
+
+    <select id="FbPlayCount" resultType="int">
+        select count(0) from fb_play where isdel=0 and state=0 and userid=#{userid} and type=#{type}
+    </select>
+</mapper>

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.whp.usdtfb.user.Dao.FbOrderDao">
+    <insert id="FbOrderInsert">
+        INSERT INTO `fb_order` (
+        `pid`,
+        `userid`,
+        `fuserid`,
+        `sellid`,
+        `number`,
+        `money`,
+        `univalent`,
+        `createtime`,
+        `updatetime`,
+        `type`
+        )
+        VALUES
+        (
+        #{pid},
+        #{userid},
+        #{fuserid},
+        #{sellid},
+        #{number},
+        #{money},
+        #{univalent},
+        now(),
+        now(),
+        #{type}
+
+        );
+    </insert>
+
+    <insert id="FbOrderLog">
+        INSERT into fb_order_log(
+        pid,orderid,type,createtime,state
+        )
+        values(
+        uuid(),
+        #{orderid},
+        #{type},
+        now(),
+        #{state}
+        )
+    </insert>
+
+    <select id="FbOrderDan" resultType="map">
+        select a.*,b.fb_currency_id,b.pay_wx,b.pay_al,b.pay_bank from fb_order as a INNER JOIN fb_sell as b on
+        a.sellid=b.pid where a.pid=#{pid}
+    </select>
+
+    <update id="FbOrderUpdate">
+        update fb_order
+        <set>
+            state=#{state},
+        </set>
+        <where>
+            pid=#{pid}
+        </where>
+    </update>
+
+    <select id="FbOrderSelect" resultType="map">
+        SELECT
+        a.pid,
+        a.userid,
+        a.fuserid,
+        a.number,
+        a.money,
+        a.state,
+        DATE_FORMAT(a.createtime, "%Y/%m/%d") AS 'date',
+        a.id,
+        DATE_FORMAT(a.createtime, "%H:%i:%S") AS 'time',
+        a.type,
+        z1.trad_volume,
+        z1.reputation,
+        z2.nickname,
+        z2.phone,
+        z2.img,
+        z2.real_name,
+        z3.`name`,
+        z3.type as 'grade_type',
+        c.`name` AS 'currency_name'
+        FROM
+        fb_order AS a
+        INNER JOIN fb_sell AS b ON a.sellid = b.pid
+        INNER JOIN fb_currency AS c ON c.pid = b.fb_currency_id
+        INNER JOIN fb_user AS z1 ON a.userid = z1.pid
+        OR a.fuserid = z1.pid
+        INNER JOIN usdt.sub_user AS z2 ON z1.pid = z2.pid
+        INNER JOIN usdt.sys_grade AS z3 ON z3.pid = z2.sys_grade_id
+
+        <where>(a.userid=#{userid} or a.fuserid=#{userid}) and z1.pid!=#{userid}
+            and a.isdel=0
+            <if test="state==0">
+                and a.state in(0,1,2,3,4,8,9)
+            </if>
+            <if test="state==1">
+                and a.state in(7,6,5)
+            </if>
+
+        </where>
+        ORDER BY id desc
+        limit #{page},#{num}
+
+    </select>
+
+    <select id="FbOrderCount" resultType="int">
+        SELECT
+        count(0)
+        FROM
+        fb_order AS a
+        INNER JOIN fb_sell AS b ON a.sellid = b.pid
+        INNER JOIN fb_currency AS c ON c.pid = b.fb_currency_id
+        INNER JOIN fb_user AS z1 ON a.userid = z1.pid
+        OR a.fuserid = z1.pid
+        INNER JOIN usdt.sub_user AS z2 ON z1.pid = z2.pid
+        INNER JOIN usdt.sys_grade AS z3 ON z3.pid = z2.sys_grade_id
+
+        <where>(a.userid=#{userid} or a.fuserid=#{userid}) and z1.pid!=#{userid}
+            and a.isdel=0
+            <if test="state==0">
+                and a.state in(0,1,2,3,4,8,9)
+            </if>
+            <if test="state==1">
+                and a.state in(7,6,5)
+            </if>
+
+        </where>
+    </select>
+    <select id="FbOrderJx" resultType="int">
+        SELECT
+        count(0)
+        FROM
+        fb_order where state in(0,1,2,3,4) and sellid=#{sellid}
+    </select>
+</mapper>

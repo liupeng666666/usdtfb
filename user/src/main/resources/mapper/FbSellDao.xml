@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.whp.usdtfb.user.Dao.FbSellDao">
+    <insert id="FbSellInsert">
+        INSERT INTO `fb_sell` (
+        `pid`,
+        `fb_currency_id`,
+        `univalent`,
+        `min_money`,
+        `max_money`,
+        `number`,
+        `bfb`,
+        `memo`,
+        `userid`,
+        `state`,
+        `isdel`,
+        `type`,
+        `password`,
+        `pay_wx`,
+        `pay_al`,
+        `pay_bank`,
+        `createtime`,
+        `updatetime`,
+        poundage
+        )
+        VALUES
+        (
+        #{pid},
+        #{currencyid},
+        #{univalent},
+        #{min_money},
+        #{max_money},
+        #{number},
+        #{bfb},
+        #{memo},
+        #{userid},
+        0,
+        0,
+        #{type},
+        #{password},
+        #{pay_wx},
+        #{pay_al},
+        #{pay_bank},
+        now(),
+        now(),
+        #{poundage}
+        );
+    </insert>
+
+    <select id="FbSellSelect" resultType="map">
+        SELECT
+        a.pid,
+        a.univalent,
+        a.number,
+        a.state,
+        a.complete_number,
+        a.style,
+        b.`name`,
+        a.number-a.complete_number as 'surplus',
+        DATE_FORMAT(a.createtime,"%Y/%m/%d") as 'date',
+        DATE_FORMAT(a.createtime,"%H:%i:%S") as 'time',
+        a.min_money,
+        a.max_money,
+        a.bfb,
+        a.orderid,
+        a.poundage as 'sxf'
+        FROM
+        fb_sell AS a
+        INNER JOIN fb_currency AS b ON a.fb_currency_id = b.pid
+        <where>
+            <if test="map.currencyid!=null and map.currencyid!=''">
+                and a.fb_currency_id=#{map.currencyid}
+            </if>
+            <if test="map.state!=null and map.state!=''">
+                and a.state=#{map.state}
+            </if>
+            and a.userid=#{map.userid} and `type`=#{map.type}
+        </where>
+        order by orderid DESC limit #{page},#{num}
+    </select>
+    <select id="FbSellCount" resultType="int">
+        SELECT
+        count(0)
+        FROM
+        fb_sell AS a
+        INNER JOIN fb_currency AS b ON a.fb_currency_id = b.pid
+        <where>
+            <if test="map.currencyid!=null and map.currencyid!=''">
+                and a.fb_currency_id=#{map.currencyid}
+            </if>
+            <if test="map.state!=null and map.state!=''">
+                and a.state=#{map.state}
+            </if>
+            and a.userid=#{map.userid} and `type`=#{map.type}
+        </where>
+    </select>
+
+    <select id="FbSellDan" resultType="map">
+        SELECT
+        a.*, b. `name` as 'currency',
+        b.currencyid,
+        c.webo,
+        c.`trad_volume`,
+        c.reputation,
+        d.nickname,
+        d.img,
+        e.type as 'grade_type',
+        e.`name` as 'grade_name',
+        d.real_name
+        FROM
+        (
+        SELECT
+        pid,
+        fb_currency_id,
+        univalent,
+        min_money,
+        max_money,
+        number,
+        complete_number,
+        bfb,
+        type,
+        userid,
+        pay_wx,
+        pay_al,
+        pay_bank,
+        createtime,
+        state,
+        memo,
+        style,
+        number-complete_number as 'surplus',
+        poundage
+        FROM
+        fb_sell
+        WHERE
+        pid = #{pid}
+        ) AS a
+        INNER JOIN fb_currency AS b ON a.fb_currency_id = b.pid
+        INNER JOIN fb_user AS c ON c.pid = a.userid
+        INNER JOIN usdt.sub_user AS d ON d.pid = c.pid
+        INNER JOIN usdt.sys_grade AS e ON e.pid = d.sys_grade_id
+    </select>
+
+    <update id="FbSellUpdate">
+        update fb_sell
+        <set>
+            complete_number=complete_number+#{number},
+            style=#{style}
+        </set>
+        <where>
+            pid=#{pid}
+        </where>
+    </update>
+    <select id="FbSellPassword" resultType="int">
+        select count(0) from fb_sell
+        <where>
+            and pid=#{sellid} and password=#{password} and userid=#{userid}
+        </where>
+
+    </select>
+    <update id="FbSellDanUpdate">
+        update fb_sell
+        <set>
+            univalent=#{univalent},
+            min_money=#{min_money},
+            max_money=#{max_money},
+            bfb=#{bfb},
+            pay_wx=#{pay_wx},
+            pay_al=#{pay_al},
+            pay_bank=#{pay_bank},
+            memo=#{memo}
+        </set>
+        <where>
+            pid=#{pid} and userid=#{userid}
+        </where>
+    </update>
+
+    <update id="FbSellStateUpdate">
+        update fb_sell
+        <set>
+            state=#{state}
+        </set>
+        <where>
+            pid=#{pid}
+            <if test="userid!=null and userid!=''">
+                and userid=#{userid}
+            </if>
+        </where>
+    </update>
+
+</mapper>

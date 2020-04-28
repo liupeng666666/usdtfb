@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.whp.usdtfb.user.Dao.LFbRechargeDao">
+
+    <select id="LFbRechargeSelect" resultType="map">
+        SELECT
+        DATE_FORMAT(a.createtime, "%Y/%m/%d %H:%i:%S") AS 'datetime',
+        a.createtime,
+        a.to_address,
+        a.money,
+        a.from_wallet,
+        a.examine,
+        a.usdtid
+        FROM
+        fb_usdt AS a
+        WHERE
+        a.userid = #{userid}
+        AND a.codeid = #{map.codeid}
+        AND a.style = #{map.style}
+        AND a.isdel = '0'
+        ORDER BY a.createtime DESC limit #{page},#{num}
+    </select>
+
+    <select id="LFbRechargeCnt" resultType="int">
+        SELECT
+        count(0)
+        FROM
+        fb_usdt AS a
+        WHERE
+        a.userid = #{userid}
+        AND a.codeid = #{map.codeid}
+        AND a.style = #{map.style}
+        AND a.isdel = '0'
+    </select>
+</mapper>

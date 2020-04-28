@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.whp.usdtfb.user.Dao.SubUserDao">
+
+    <!--根据用户名查询用户信息 仅程序内部使用-->
+    <select id="getSubUserByUserName" resultType="HashMap">
+        SELECT su.realname AS realname,su.nationality AS
+        nationality,su.pid,`img`,nickname,username,`password`,phone,email,trade_password,sex,region,hobby,dabble_time,createtime,follow_num,fans_num,sys_grade_id,wallet,trader,sub_user_id,rolename
+        FROM usdt.sub_user su
+        LEFT JOIN usdt.sub_role sr on sr.roleid = su.roleid
+        where su.pid = #{username} and isdel = 0 and state = 0
+    </select>
+
+    <select id="SubUserCount" resultType="int">
+        select count(0) from usdt.sub_user where pid=#{userid} and trade_password=#{password} and isdel=0 and state=0
+    </select>
+
+    <select id="SubUserGoogle" resultType="map">
+        select isgoogle,google_secret,pid from usdt.sub_user where pid=#{userid} and isdel=0 and state=0
+    </select>
+</mapper>

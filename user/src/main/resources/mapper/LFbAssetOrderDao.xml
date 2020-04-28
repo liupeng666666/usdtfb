@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.whp.usdtfb.user.Dao.LFbAssetOrderDao">
+
+    <select id="LFbAssetOrderSelect" resultType="map">
+        SELECT
+        a.pid,
+        a.currencyid,
+        a.name,
+        IFNULL(b.surplus, 0) AS surplus,
+        IFNULL(b.frozen, 0) AS frozen,
+        IFNULL(b.surplus, 0) + IFNULL(b.frozen, 0) AS moneySum,
+        a.img
+        FROM
+        fb_currency AS a
+        LEFT OUTER JOIN
+        (SELECT
+        c.currencyid, c.surplus, c.frozen
+        FROM
+        fb_money AS c
+        WHERE
+        c.userid = #{userid}
+        and c.isdel = '0'
+        ) AS b
+        ON a.pid = b.currencyid
+        WHERE a.state = '0'
+        AND a.isdel = '0'
+    </select>
+
+    <select id="LFbAssetOrderUsdtSelect" resultType="map">
+        SELECT
+        a.surplus,
+        a.bur_money
+        FROM
+        usdt.sub_money a
+        WHERE
+        a.pid = #{userid}
+        AND a.isdel = '0'
+    </select>
+
+    <select id="LFbAssetOrderCnt" resultType="int">
+        SELECT
+        count(pid) as cnt
+        FROM
+        fb_money a
+        WHERE
+        a.userid = #{userid}
+        and a.currencyid = #{currencyid}
+        AND a.isdel = '0'
+    </select>
+
+    <insert id="LFbAssetOrderIns">
+        INSERT INTO `fb_money` (
+        `pid`,
+        `name`,
+        `surplus`,
+        `frozen`,
+        `createtime`,
+        `updatetime`,
+        `isdel`,
+        `state`,
+        `currencyid`,
+        `userid`
+        )
+        VALUES
+        (
+        UUID(),
+        #{name},
+        #{surplus},
+        0,
+        NOW(),
+        NOW(),
+        '0',
+        '0',
+        #{currencyid},
+        #{userid}
+        )
+    </insert>
+
+    <update id="LFbAssetOrderUpd1" parameterType="map">
+        update fb_money
+        set
+        surplus = surplus - #{map.surplusUpd},
+        updatetime = now()
+        where userid = #{userid}
+        and currencyid = #{map.currencyFrmId}
+        and isdel = '0'
+    </update>
+
+    <update id="LFbAssetOrderUpd2" parameterType="map">
+        update fb_money
+        set
+        surplus = surplus + #{map.surplusAdd},
+        updatetime = now()
+        where userid = #{userid}
+        and currencyid = #{map.currencyToId}
+        and isdel = '0'
+    </update>
+
+    <update id="LFbAssetOrderUpd3" parameterType="map">
+        update usdt.sub_money
+        <set>
+            <if test="map.currencyFrmName == 'USDT'">
+                surplus = surplus - #{map.surplusUpd},
+            </if>
+
+            <if test="map.currencyFrmName == 'BRU'">
+                bur_money = bur_money - #{map.surplusUpd},
+            </if>
+            updatetime = now()
+        </set>
+        where pid = #{userid}
+        and isdel = '0'
+    </update>
+
+    <update id="LFbAssetOrderUpd4" parameterType="map">
+        update usdt.sub_money
+        <set>
+            <if test="map.currencyToName == 'USDT'">
+                surplus = surplus + #{map.surplusAdd},
+            </if>
+
+            <if test="map.currencyToName == 'BRU'">
+                bur_money = bur_money + #{map.surplusAdd},
+            </if>
+            updatetime = now()
+        </set>
+        where pid = #{userid}
+        and isdel = '0'
+    </update>
+
+    <insert id="LFbAssetTransferIns">
+        INSERT INTO fb_transfer (
+        pid,
+        from_currency,
+        to_currency,
+        from_money,
+        to_money,
+        createtime,
+        userid,
+        state,
+        isdel,
+        type
+        )
+        VALUES
+        (
+        UUID(),
+        #{from_currency},
+        #{to_currency},
+        #{from_money},
+        #{to_money},
+        NOW(),
+        #{userid},
+        '0',
+        '0',
+        #{type}
+        )
+    </insert>
+
+</mapper>

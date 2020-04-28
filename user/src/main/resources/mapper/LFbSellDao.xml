@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.whp.usdtfb.user.Dao.LFbSellDao">
+
+    <select id="LFbSellSelect" resultType="map">
+        SELECT
+        a.pid,
+        a.univalent,
+        a.min_money,
+        a.max_money,
+        a.number,
+        (a.number-a.complete_number) as 'surplus',
+        a.pay_bank,
+        a.pay_wx,
+        a.pay_al,
+        b.trad_volume,
+        b.reputation,
+        c.img,
+        c.nickname,
+        c.real_name,
+        d.type,
+        e.name as 'currency_name'
+        FROM
+        fb_sell AS a
+        INNER JOIN fb_user AS b ON a.userid = b.pid
+        INNER JOIN fb_currency as e on e.pid=a.fb_currency_id
+        INNER JOIN usdt.sub_user AS c ON a.userid = c.pid
+        INNER JOIN usdt.sys_grade AS d ON c.sys_grade_id = d.pid
+        <where>
+
+            a.type = #{map.type}
+            <if test="map.currencyid!=null and map.currencyid!=''">
+                and a.fb_currency_id = #{map.currencyid}
+            </if>
+            <if test="map.pay ==1">
+                and a.pay_bank = '1'
+            </if>
+
+            <if test="map.pay ==2">
+                and a.pay_wx = '1'
+            </if>
+
+            <if test="map.pay == 3">
+                and a.pay_al = '1'
+            </if>
+            and a.state = '0'
+            and a.isdel = '0'
+            and (a.number-a.complete_number)>0
+        </where>
+        order by univalent ASC limit #{page},#{num}
+    </select>
+
+    <select id="LFbSellCount" resultType="int">
+        SELECT
+        count(0)
+        FROM
+        fb_sell AS a
+        INNER JOIN fb_user AS b ON a.userid = b.pid
+        INNER JOIN fb_currency as e on e.pid=a.fb_currency_id
+        INNER JOIN usdt.sub_user AS c ON a.userid = c.pid
+        INNER JOIN usdt.sys_grade AS d ON c.sys_grade_id = d.pid
+        <where>
+
+            a.type = #{map.type}
+            <if test="map.currencyid!=null and map.currencyid!=''">
+                and a.fb_currency_id = #{map.currencyid}
+            </if>
+            <if test="map.pay ==1">
+                and a.pay_bank = '1'
+            </if>
+
+            <if test="map.pay ==2">
+                and a.pay_wx = '1'
+            </if>
+
+            <if test="map.pay == 3">
+                and a.pay_al = '1'
+            </if>
+            and a.state = '0'
+            and a.isdel = '0'
+            and (a.number-a.complete_number)>0
+        </where>
+    </select>
+
+</mapper>

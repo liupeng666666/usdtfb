@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.whp.usdtfb.user.Dao.FbScoreDao">
+    <select id="FbScoreSelect" resultType="map">
+        select * from fb_score where isdel=0 and sys=1 limit 1
+    </select>
+    <select id="FbScoreSelectQ" resultType="map">
+        select * from fb_score where isdel=0
+    </select>
+</mapper>

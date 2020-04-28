@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.whp.usdtfb.user.Dao.FbProblemDao">
+    <select id="FbProblemSelect" resultType="map">
+        SELECT
+        a.pid,a.id,a.message,DATE_FORMAT(a.createtime,"%Y/%m/%d %H:%i:%S") as 'createtime',b.title
+        FROM
+        fb_problem AS a
+        INNER JOIN fb_problem_class AS b ON a.classid = b.pid
+
+        where a.isdel=0 and a.state=#{state}
+        and userid=#{userid}
+        ORDER BY a.id DESC
+    </select>
+    <insert id="FbProblemInsert">
+        INSERT INTO `fb_problem` (
+        `pid`,
+        `img`,
+        `message`,
+        `createtime`,
+        `state`,
+        <if test="orderid!=null and orderid!=''">
+            `orderid`,
+        </if>
+
+        `userid`,
+        `isdel`,
+        `classid`,
+        `updatetime`
+        )
+        VALUES
+        (
+        uuid(),
+        #{img},
+        #{message},
+        now(),
+        0,
+        <if test="orderid!=null and orderid!=''">
+            #{orderid},
+        </if>
+        #{userid},
+        0,
+        #{classid},
+        now()
+        );
+    </insert>
+
+    <select id="FbProblemDan" resultType="map">
+        SELECT
+        a.pid,a.id,a.message,DATE_FORMAT(a.createtime,"%Y/%m/%d %H:%i:%S") as
+        'createtime',a.programme,DATE_FORMAT(a.updatetime,"%Y/%m/%d %H:%i:%S") as 'updatetime',b.title
+        FROM
+        fb_problem AS a
+        INNER JOIN fb_problem_class AS b ON a.classid = b.pid
+        where a.isdel=0 and a.pid=#{pid}
+    </select>
+</mapper>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.whp.usdtfb.user.Dao.FbCurrencyDao">
+    <select id="FbCurrencySelect" resultType="map">
+        select * from fb_currency where isdel=0 and state=0
+    </select>
+    <select id="FbCurrencyDan" resultType="map">
+        select * from fb_currency where isdel=0 and state=0 and name=#{name} LIMIT 1
+    </select>
+    <select id="FbCurrencyUsdt" resultType="map">
+        select * from fb_currency where isdel=0 and state=0 and pid=#{pid} LIMIT 1
+    </select>
+</mapper>

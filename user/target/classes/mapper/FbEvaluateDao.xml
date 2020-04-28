@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.whp.usdtfb.user.Dao.FbEvaluateDao">
+    <insert id="FbEvakyateInsert">
+        INSERT INTO `usdtfb`.`fb_evaluate` (`pid`, `userid`, `score`, `orderid`, `type`, `createtime`, `puserid`) VALUES
+        (uuid(), #{userid},#{score}, #{ordeid}, #{type}, now(), #{puserid});
+    </insert>
+</mapper>

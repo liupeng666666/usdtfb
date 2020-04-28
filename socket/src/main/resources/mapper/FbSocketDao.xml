@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.whp.usdtfb.socket.Dao.FbSocketDao">
+    <select id="FbSocketSelect" resultType="map">
+        SELECT
+        a.pid,
+        a.`from`,
+        a.`to`,
+        a.message,
+        DATE_FORMAT(
+        a.createtime,
+        "%Y/%m/%d %H:%i:%S"
+        ) AS 'createtime',
+        b.img as 'from_img',
+        b.nickname as 'from_nickname',
+        c.img AS 'to_img',
+        c.nickname AS 'to_nickname',
+        a.orderid
+        FROM
+        fb_socket AS a
+        INNER JOIN usdt.sub_user AS b ON a.`from` = b.pid
+        INNER JOIN usdt.sub_user AS c ON c.pid = a.`to`
+        WHERE
+        ((a.`from` =#{from}
+        AND a.`to` = #{to}) or (a.`from` =#{to}
+        AND a.`to` = #{from}))
+        AND orderid=#{orderid}
+        <if test="orderid==0">
+            AND DATE_FORMAT(a.createtime, "%Y/%m/%d") = DATE_FORMAT(now(), "%Y/%m/%d")
+        </if>
+
+        ORDER BY a.createtime ASC
+    </select>
+    <insert id="FbSocketInsert">
+        INSERT INTO `fb_socket` (`pid`, `from`, `to`, `message`, `createtime`, `state`
+        <if test="orderid!=null and orderid!=''">
+            ,orderid
+        </if>
+        ) VALUES (uuid(), #{from}, #{to}, #{message}, now(), 0
+        <if test="orderid!=null and orderid!=''">
+            ,#{orderid}
+        </if>
+        );
+    </insert>
+
+    <update id="FbSocketUpdate">
+        Update `fb_socket` set state=#{type} where `from`=#{from} and `to`=#{to} and orderid=#{orderid}
+    </update>
+
+    <select id="FbSocketWeiDu" resultType="map">
+        SELECT
+        a.pid,
+        a.`from`,
+        a.`to`,
+        a.message,
+        DATE_FORMAT(
+        a.createtime,
+        "%Y/%m/%d %H:%i:%S"
+        ) AS 'createtime',
+        b.img as 'from_img',
+        b.nickname as 'from_nickname',
+        c.img AS 'to_img',
+        c.nickname AS 'to_nickname',
+        a.orderid
+        FROM
+        fb_socket AS a
+        INNER JOIN usdt.sub_user AS b ON a.`from` = b.pid
+        INNER JOIN usdt.sub_user AS c ON c.pid = a.`to`
+
+        where a.to=#{to} and a.state=0
+        GROUP BY a.orderid ,a.`from` order by a.createtime desc
+    </select>
+</mapper>

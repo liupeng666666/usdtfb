@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.whp.usdtfb.block.Dao.FbSysWalletDao">
+    <select id="FbSysWalletSelect" resultType="map">
+        select * from fb_sys_wallet where codeid=#{codeid} limit 1
+    </select>
+    <insert id="FbSysWalletInsert">
+        INSERT INTO `fb_sys_wallet` (
+        `pid`,
+        `address`,
+        `private`,
+        `public`,
+        `path`,
+        `createtime`,
+        `codeid`,
+        `state`,
+        `isdel`
+        )
+        VALUES
+        (
+        uuid(),
+        #{address},
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        #{codeid},
+        '0',
+        '0'
+        );
+
+
+    </insert>
+</mapper>
